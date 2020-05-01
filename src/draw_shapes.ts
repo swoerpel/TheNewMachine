@@ -1,12 +1,12 @@
 import { default_shape_properties } from './params';
 
-export var DrawCircle = (graphic,row,origin, cell, color_machine) => {
-    let color_value = row._color[cell.index] / default_shape_properties.colors
+export var DrawCircle = (graphic,color_machine,row, cell) => {
+    let color_value = row.default_color[cell.index] / default_shape_properties.colors
     let co = color_machine(color_value).rgba()
-    co[3] = 255 * default_shape_properties.color_alpha_values[row.color_alpha[cell.index]]
+    co[3] = 255 * default_shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
     graphic.fill(co)
-    let radius = default_shape_properties.shape_sizes[row.size[cell.index]] * cell.width;
-    graphic.circle(origin.cx, origin.cy, radius)
+    let radius = default_shape_properties.shape_sizes[row.shape_sizes[cell.index]] * cell.width;
+    graphic.circle(cell.origin.cx, cell.origin.cy, radius)
 }
 
 

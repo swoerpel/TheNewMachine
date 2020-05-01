@@ -6,7 +6,7 @@ import { chromotome_palettes } from './chromotome';
 import { DrawCircle, DrawTriangle } from './draw_shapes';
 
 export class WolframImage{
-    dataGenerators: { [key: string] : Wolfram, color : Wolfram } = {};
+    dataGenerators: any = {};
     palettes = {};
     color_machine;
     graphic;
@@ -16,19 +16,13 @@ export class WolframImage{
         'rectangle': () => this.initRect(),
         'triangle': () => this.initTriangle()
     }
-    color_palette: string[];
+    color_palette: string;
     img_params: Partial<WolframParams>;
     constructor(image_index){
         this.img_params = params.images[image_index];
-        
-        let data_grid_keys = [
-            '_color',
-            'size',
-            'subshape',
-            'subshape_size',
-            'color_alpha',
-            'rotation'
-        ]
+        let data_grid_keys = Object.keys(default_shape_properties)
+
+        data_grid_keys.push('default')
         data_grid_keys.map((key) =>{
             this.dataGenerators[key] = this.initDataGridPair(key)
         })
@@ -47,65 +41,37 @@ export class WolframImage{
         this.refreshColorMachine(palette_name)
     }
 
-    drawRow(draw_index){
+    getCell(cell_index, row_index){
+        const cell_width = params.canvas.width / this.img_params.grid.width
+        const cell_height = params.canvas.height / this.img_params.grid.height
+        return {
+            index: cell_index,
+            width: cell_width,
+            height: cell_height,
+            origin:{
+                x: cell_index * cell_width,
+                y: row_index * cell_height,
+                cx: cell_index * cell_width + (cell_width / 2),
+                cy: row_index * cell_height + (cell_height / 2)
+            }
+        }
+    }
+
+    drawRow(row_index){
         this.graphic.strokeWeight(0);
-        let row_index = draw_index;
-        let rows = [];
-        let row_group = {}
-        if(row_index == 0){
-            for(let i = 0; i < wolfram_kernels[this.img_params.kernel].length; i++){
-                Object.entries(this.dataGenerators).forEach(([key,value]) => {
-                    // console.log('value',value)
-                    // console.log('key,value',key,value)
+        let row_group:any = {}
 
-                    // let init_row = value[key].getInitRow(row_index)
-                    // row_group[key] = {
-                        // [key]: [...init_row],
-                        // color: [...init_row]
-                    // }
-                    row_group[key] = value[key].getInitRow(row_index)
-                    row_group[key + '_color'] = value.color.getInitRow(row_index)
-                    // row_group[key + '_color'] = value.color.getInitRow(row_index)
-                })
-                rows.push(row_group)  
-            }
-            // console.log(row_group)
+        Object.entries(this.dataGenerators).forEach(([key,value]:[any,any]) => {
+            row_group[key] = [...value[key].generateRow()]
+            row_group[key + '_color'] = [...value.color.generateRow()]
+        })
 
-        }else {
-            Object.entries(this.dataGenerators).forEach(([key,value]) => {
-                
-                // row_group[key] = {
-                    // [key]: [...value[key].generateRow()],
-                    // color: [...value.color.generateRow()]
-                // }
-                row_group[key] = [...value[key].generateRow()]
-                row_group[key + '_color'] = [...value.color.generateRow()]
-                // row_group[key + '_color'] = value.color.getInitRow(row_index)
-
-            })
-            const cell_width = params.canvas.width / this.img_params.grid.width
-            const cell_height = params.canvas.height / this.img_params.grid.height
-                // _color is present in every data grid
-            for(let j = 0; j < row_group._color.length; j++){
-                let origin = {
-                    x: j * cell_width,
-                    y: row_index * cell_height,
-                    cx: j * cell_width + (cell_width / 2),
-                    cy: row_index * cell_height + (cell_height / 2)
-                }
-                let cell = {
-                    index: j,
-                    width: cell_width,
-                    height: cell_height,
-                }
-                // _color is present in every data grid
-                const offset = this.dataGenerators._color.color.kernel.dims.y; 
-                this.graphic.translate(0,-cell_height * offset)
-                // DrawTriangle(this.graphic, row_group, origin, cell, this.color_machine)
-                DrawCircle(this.graphic, row_group, origin, cell, this.color_machine)
-                this.graphic.translate(0,cell_height * offset)
-                
-            }
+        for(let cell_index = 0; cell_index < row_group.default.length; cell_index++){
+            let cell = this.getCell(cell_index,row_index)
+            const offset = this.dataGenerators.default.color.kernel.dims.y; 
+            this.graphic.translate(0,-cell.height * offset)
+            DrawCircle(this.graphic,this.color_machine, row_group, cell )
+            this.graphic.translate(0,cell.height * offset)
         }
     }
 
@@ -116,7 +82,7 @@ export class WolframImage{
             [primary_grid_type]: Object.assign({}, this.img_params),
         }
         let base =  default_shape_properties.shape_sizes.length 
-        if(primary_grid_type === '_color')
+        if(primary_grid_type === 'default')
             base = default_shape_properties.colors;
         dataGridParamsPair[primary_grid_type].base = base
         dataGridParamsPair.color.base = base;
@@ -156,6 +122,7 @@ export class WolframImage{
             this.color_palette = pal_names[rand_index]
             this.color_machine = chroma.scale(this.palettes[this.color_palette]);
         }
+        console.log(this.color_palette)
         console.log('this.color_machine',this.color_machine(0),this.color_machine(1))
     }
 

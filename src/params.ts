@@ -1,4 +1,14 @@
 
+export var default_shape_properties = {
+  colors: 4,
+  rotations:[0],
+  shape_sizes:[1,1],
+  subshapes:[1], //1x1, 2x2, 3x3
+  subshape_sizes:[1],
+  color_alpha_values: [1]
+}
+
+
 export var params = {
   canvas: {
     width: 2400,
@@ -9,7 +19,7 @@ export var params = {
   },
 
   color:{
-    palette: 'spectral'
+    palette: 'Spectral'
   },
 
   images: [
@@ -58,15 +68,7 @@ export var params = {
   }
 }
 
-export var default_shape_properties = {
-  colors: 4,
-  rotations:[0],
-  shape_sizes:[1,1],
-  subshapes:[1], //1x1, 2x2, 3x3
-  subshape_sizes:[1],
-  // color_alpha_values: [1]
-  color_alpha_values: [1]
-}
+
 
 export var wolfram_kernels = {
   'A': [

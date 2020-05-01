@@ -13,7 +13,7 @@ var sketch = function (p: p5) {
   
   p.setup = function () {
     setupGraphics()
-    setupImages()
+    setupImages(params.color.palette)
   }
 
   function setupGraphics(){
@@ -31,7 +31,7 @@ var sketch = function (p: p5) {
   }
 
   function incDrawIndex(){
-    let k_offset = img1.dataGenerators._color.color.kernel.dims.y
+    let k_offset = img1.dataGenerators.default.color.kernel.dims.y
     if(params.draw.mode == 'fixed'){
       draw_index = draw_index + 1
       if(draw_index == params.images[image_index].grid.height + k_offset){
