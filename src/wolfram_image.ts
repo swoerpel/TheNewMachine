@@ -70,8 +70,8 @@ export class WolframImage{
             let cell = this.getCell(cell_index,row_index)
             const offset = this.dataGenerators.default.color.kernel.dims.y; 
             this.graphic.translate(0,-cell.height * offset)
-            DrawTriangle(this.graphic,this.color_machine, row_group, cell )
-            // DrawCircle(this.graphic,this.color_machine, row_group, cell )
+            // DrawTriangle(this.graphic,this.color_machine, row_group, cell )
+            DrawCircle(this.graphic,this.color_machine, row_group, cell )
             this.graphic.translate(0,cell.height * offset)
         }
     }

@@ -1,32 +1,31 @@
 
 export var shape_properties = {
-  colors: 4,
-  rotations:[0,180],
-  shape_sizes:[.5,1,1],
+  colors: 2,
+  rotations:[0],
+  shape_sizes:[1,1],
   subshapes:[1], //1x1, 2x2, 3x3
   subshape_sizes:[1],
-  color_alpha_values: [.05]
+  color_alpha_values: [1]
 }
 
 
 export var params = {
   canvas: {
-    width: 4800,
-    height: 4800
+    width: 2400,
+    height: 2400
   },
 
 
   images: [
     {
       grid: {
-        width: 32,
-        height: 32,
+        width: 9,
+        height: 9,
       },
-      mode: 1,
-      kernel: 'B',
+      kernel: 'A',
       shape: 'triangle',
       init_row: {
-        mode: 1, 
+        mode: 4, 
         group_size: 7
       },
     },
@@ -35,7 +34,6 @@ export var params = {
         width: 4,
         height: 4,
       },
-      mode: 1,
       kernel: 'B',
       shape: 'circle',
       init_row: {
@@ -62,7 +60,7 @@ export var params = {
   },
 
   draw:{
-    mode:'cycle', // cycle
+    mode:'fixed', // cycle
   },
 
   color:{
