@@ -2,9 +2,54 @@ import { shape_properties } from './params';
 
 export var DrawCircle = (graphic,color_machine,row, cell) => {
     graphic.strokeWeight(0)
+    graphic.ellipseMode(graphic.CENTER)
+    console.log('origin',cell.origin)
     const sub_dim = shape_properties.subshapes[row.subshapes[cell.index]];
     if(sub_dim === 1){
-        drawCircleStack(graphic,color_machine,row, cell)
+        let radius = shape_properties.shape_sizes[row.shape_sizes[cell.index]] * cell.width;
+        drawCircleStack(graphic,color_machine,row, cell.index,cell.origin, radius)
+    }else{
+        const sub_cell_width = cell.width / sub_dim;
+        const sub_cell_height = cell.height / sub_dim;
+        const color_value = row.default_color[cell.index] / shape_properties.colors
+        const sub_color_value = row.subshapes_color[cell.index] / shape_properties.colors
+        let index = 0;
+        let cvs = [color_value];
+        cvs.push(sub_color_value)
+        for(let i = 2; i < sub_dim * sub_dim; i++)
+            cvs.push(1 - cvs[i - 2])
+        // for(let n = 0; n < sub_dim; n++){
+        for(let x = 0; x < sub_dim; x++){
+            for(let y = 0; y < sub_dim; y++){
+                let sub_origin = {
+                    x: cell.origin.x + x * sub_cell_width,
+                    y: cell.origin.y + y * sub_cell_height,
+                    cx: cell.origin.x + x * sub_cell_width + sub_cell_width / 2,
+                    cy: cell.origin.y + y * sub_cell_height + sub_cell_height / 2,
+                }
+                let radius = shape_properties.subshape_sizes[row.subshape_sizes[cell.index]] * sub_cell_width;
+                drawCircleStack(graphic,color_machine,row, cell.index,sub_origin, radius)
+                index += 1;
+            }
+        }
+    }
+}
+
+function drawCircleStack(graphic,color_machine,row,cell_index,cell_origin, radius){
+    const def_color_value = row.default_color[cell_index] / shape_properties.colors
+    for(let i = cell_index; i >= 0; i--){
+        let co = color_machine(def_color_value / (i + 1)).rgba()
+        co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell_index]]
+        graphic.fill(co)
+        graphic.circle(cell_origin.cx, cell_origin.cy, radius,radius)
+    }
+}
+
+export var DrawTriangle = (graphic,color_machine,row, cell) => {
+    graphic.strokeWeight(0)
+    const sub_dim = shape_properties.subshapes[row.subshapes[cell.index]];
+    if(sub_dim === 1){
+        drawTriangleStack(graphic,color_machine,row, cell.origin, cell)
     }else{
         const sub_cell_width = cell.width / sub_dim;
         const sub_cell_height = cell.height / sub_dim;
@@ -19,15 +64,12 @@ export var DrawCircle = (graphic,color_machine,row, cell) => {
             for(let y = 0; y < sub_dim; y++){
                 let sub_origin = {
                     x: cell.origin.x + x * sub_cell_width,
-                    y: cell.origin.y + y * sub_cell_height
+                    y: cell.origin.y + y * sub_cell_height,
+                    cx: cell.origin.x + x * sub_cell_width + sub_cell_width / 2,
+                    cy: cell.origin.y + y * sub_cell_height + sub_cell_height / 2,
                 }
-                for(let i = cell.index; i >= 0; i--){
-                    let co = color_machine(cvs[index]  / (i + 1)).rgba()
-                    co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
-                    graphic.fill(co)
-                    let radius = shape_properties.subshape_sizes[row.subshape_sizes[i]] * sub_cell_width;
-                    graphic.circle(sub_origin.x + sub_cell_width / 2, sub_origin.y + sub_cell_height / 2, radius)
-                }
+                cell.origin = sub_origin
+                drawTriangleStack(graphic,color_machine,row,sub_origin,cell )
                 index += 1;
             }
         }
@@ -35,92 +77,43 @@ export var DrawCircle = (graphic,color_machine,row, cell) => {
  
 }
 
-function drawCircleStack(graphic,color_machine,row,cell){
-    const def_color_value = row.default_color[cell.index] / shape_properties.colors
+function drawTriangleStack(graphic,color_machine,row, cell_origin, cell){
     for(let i = cell.index; i >= 0; i--){
-        let co = color_machine(def_color_value / (i + 1)).rgba()
-        co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
-        graphic.fill(co)
-        let radius = shape_properties.shape_sizes[row.shape_sizes[i]] * cell.width;
-        graphic.circle(cell.origin.cx, cell.origin.cy, radius)
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-export var DrawTriangle = (graphic,row,origin, cell, color_machine) => {
-    // if(row.subshapes[cell.index] == 0){
-    let i = 0;
-    if(row.size){
-        i = row.size[cell.index]
-    }
-    for(i; i>=0 ; i--){
-        const size_value = default_shape_properties.shape_sizes[i];
-        let cell_length = cell.width * size_value;
-        // let cell_length = cell.width * Math.sqrt(2) * size_value;
+        let radius = shape_properties.shape_sizes[row.shape_sizes[i]];
         let points = [
             {
-                x: origin.cx,
-                y: origin.cy,
+                x: cell_origin.cx,
+                y: cell_origin.cy,
             },
             {
-                x: origin.cx + cell_length / 2,
-                y: origin.cy + cell_length / 2
+                x: cell_origin.cx + cell.width / 2 * radius,
+                y: cell_origin.cy + cell.height / 2 * radius
             },
             {
-                x: origin.cx - cell_length / 2,
-                y: origin.cy + cell_length / 2
+                x: cell_origin.cx - cell.width / 2 * radius,
+                y: cell_origin.cy + cell.height / 2 * radius
             },
             {
-                x: origin.cx - cell_length / 2,
-                y: origin.cy - cell_length / 2
+                x: cell_origin.cx - cell.width / 2 * radius,
+                y: cell_origin.cy - cell.height / 2 * radius
             },
         ]
-        let color_value = row._color[cell.index] / default_shape_properties.colors
-        // color_value = 1 - color_value / (i + 1)
-        // let c = p5.Color
-
-        Array.from(new Set(row.rotation_color).values()).map((r) => {
-            let co = color_machine(color_value).rgba()
-            // co[3] = 255 * 1/r
-            co[3] = 255 * default_shape_properties.color_alpha_values[row.color_alpha[cell.index]]
+        const color_value = row.default_color[cell.index] / shape_properties.colors
+        Array.from(new Set(row.rotations).values()).map((r_index,i) => {
+            let co = color_machine(color_value / (1 + i)).rgba()
+            co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
             graphic.fill(co)
             graphic.beginShape();
-            let rotation_val = default_shape_properties.rotations[row.rotation[cell.index] + r]
-            rotatePoints(points,origin,rotation_val).map((p) => {
+            let rotation_val = shape_properties.rotations[row.rotations[cell.index] + r_index]
+            rotatePoints(points,cell.origin,rotation_val).map((p) => {
+                console.log(points)
                 graphic.vertex(p.x,p.y)
             })
             graphic.endShape();
         })
-
     }
-    // }else{
-        // let sub_grid_diameter = default_shape_properties[row.subshapes[cell.index]]
-        // // console.log('sub_grid_diameter',sub_grid_diameter)
-        // let sub_cell_width = sub_grid_diameter / cell.width;
-        // let sub_cell_height = sub_grid_diameter / cell.height;
-
-        // for(let x = 0; x < sub_grid_diameter; x++){
-        //     for(let y = 0; y < sub_grid_diameter; y++){
-        //         let sub_origin = {
-        //             cx: origin.x + x * sub_cell_width,
-        //             cy: origin.y + y * sub_cell_height
-        //         }
-        //         graphic.fill(color_machine(color_value).hex())
-        //         graphic.circle(sub_origin.cx, sub_origin.cy, sub_cell_width)
-        //     }
-        // }
-    // }
-    
 }
+
 
 function rotatePoints(points,origin,rotation){
     let radians = rotation * Math.PI / 180

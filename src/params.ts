@@ -1,38 +1,32 @@
 
 export var shape_properties = {
   colors: 4,
-  rotations:[0],
-  shape_sizes:[.5,1],
+  rotations:[0,90,180],
+  shape_sizes:[1,1],
   subshapes:[1,2], //1x1, 2x2, 3x3
-  subshape_sizes:[.5,1],
-  color_alpha_values: [1]
+  subshape_sizes:[1],
+  color_alpha_values: [.25,.5,.75 ]
 }
 
 
 export var params = {
   canvas: {
-    width: 2400,
-    height: 2400
-  },
-  draw:{
-    mode:'cycle', // cycle
+    width: 4800,
+    height: 4800
   },
 
-  color:{
-    palette: 'Spectral'
-  },
 
   images: [
     {
       grid: {
-        width: 32,
-        height: 32 ,
+        width: 10,
+        height: 8,
       },
       mode: 0,
       kernel: 'B',
       shape: 'triangle',
       init_row: {
-        mode: 4 , 
+        mode: 1 , 
         group_size: 3 
       },
     },
@@ -65,7 +59,16 @@ export var params = {
     single:{
       image_id: 0
     }
-  }
+  },
+
+  draw:{
+    mode:'cycle', // cycle
+  },
+
+  color:{
+    palette: 'Spectral'
+  },
+
 }
 
 
