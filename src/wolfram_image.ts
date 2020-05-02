@@ -1,4 +1,4 @@
-import { params, shape_properties, wolfram_kernels } from './params'
+import { params, shape_properties } from './params'
 import { Wolfram } from './wolfram';
 import { WolframParams } from './models/wolfram_params.model';
 import * as chroma from 'chroma.ts';
@@ -13,26 +13,25 @@ export class WolframImage{
     draw_index = 0;
     color_palette: string;
     img_params: any;//Partial<WolframParams>;
-    constructor(image_index){
-        this.img_params = params.images[image_index];
-        let data_grid_keys = Object.keys(shape_properties)
 
 
-        data_grid_keys.push('default')
-        data_grid_keys.map((key) =>{
-            // this.dataGenerators[key] = this.dataGridLUT['default']();
-            this.dataGenerators[key] = this.initDataGridPair(key)
-        })
-        console.log('this.dataGenerators',this.dataGenerators)
+    dataGridGroupPropsLUT = {
+        'circle' : [
+            { type:'default_colors', base: shape_properties.default_colors} ,
+            { type:'shape_sizes', base: shape_properties.shape_sizes.length} ,
+            { type:'subshapes', base: shape_properties.subshapes.length} ,
+            { type:'subshape_sizes', base: shape_properties.subshape_sizes.length} ,
+            { type:'color_alpha_values', base: shape_properties.color_alpha_values.length} ,
+        ]
     }
 
-
-    dataGridLUT = {
-        default:() =>        this.dataGridFactory('default', shape_properties.colors),
-        shape_sizes:() =>    this.dataGridFactory('shape_sizes', shape_properties.shape_sizes.length),
-        rotations:() =>      this.dataGridFactory('rotations', shape_properties.rotations.length),
-        subshapes:() =>      this.dataGridFactory('subshapes', shape_properties.subshapes.length),
-        subshape_sizes:() => this.dataGridFactory('subshape_sizes', shape_properties.subshape_sizes.length),
+    constructor(image_index){
+        this.img_params = params.images[image_index];
+        const data_grid_props = [...this.dataGridGroupPropsLUT['circle']]
+        data_grid_props.map((prop) =>{
+            this.dataGenerators[prop.type] = this.dataGridFactory(prop.type, prop.base);
+        })
+        console.log('this.dataGenerators',this.dataGenerators)
     }
     
     private dataGridFactory(grid_type, base){
@@ -41,43 +40,19 @@ export class WolframImage{
             type: grid_type,
         }, this.img_params);
         let data_grid = new Wolfram(<WolframParams>data_grid_params)
-        return data_grid.Initialize();
-    }
-
-    private initDataGridPair(primary_grid_type){
-        let dataGridParamsPair ={
-            color: Object.assign({}, this.img_params),
-            [primary_grid_type]: Object.assign({}, this.img_params),
-        }
-        let base =  shape_properties.shape_sizes.length 
-        if(primary_grid_type === 'default')
-            base = shape_properties.colors;
-        dataGridParamsPair[primary_grid_type].base = base
-        dataGridParamsPair.color.base = base;
-        dataGridParamsPair[primary_grid_type].type = primary_grid_type
-        dataGridParamsPair.color.type = primary_grid_type + '-color';
-        let primary_grid = new Wolfram(<WolframParams>dataGridParamsPair[primary_grid_type])
-        primary_grid.Initialize();
-        let color_grid = new Wolfram(<WolframParams>dataGridParamsPair.color)
-        color_grid.Initialize();
-        return{
-            [primary_grid_type]: primary_grid,
-            color: color_grid,
-        }
+        data_grid.Initialize();
+        return data_grid
     }
 
     drawRow(row_index){
         this.graphic.strokeWeight(0);
         let row_group:any = {}
-
         Object.entries(this.dataGenerators).forEach(([key,value]:[any,any]) => {
-            row_group[key] = [...value[key].generateRow()]
-            row_group[key + '_color'] = [...value.color.generateRow()]
+            row_group[key] = [...value.generateRow()]
         })
-
-        for(let cell_index = 0; cell_index < row_group.default.length; cell_index++){
+        for(let cell_index = 0; cell_index < row_group.default_colors.length; cell_index++){
             let cell = this.getCell(cell_index,row_index)
-            const offset = this.dataGenerators.default.color.kernel.dims.y; 
+            const offset = this.dataGenerators.default_colors.kernel.dims.y; 
             this.graphic.translate(0,-cell.height * offset)
             this.drawShapeLUT[params.images[0].shape](this.graphic, this.color_machine, row_group, cell);
             this.graphic.translate(0,cell.height * offset)

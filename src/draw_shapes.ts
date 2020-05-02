@@ -5,17 +5,17 @@ export var DrawCircle = (graphic,color_machine,row, cell) => {
     graphic.ellipseMode(graphic.CENTER)
     const sub_dim = shape_properties.subshapes[row.subshapes[cell.index]];
     if(sub_dim === 1){
+    // if(true){
         let radius = shape_properties.shape_sizes[row.shape_sizes[cell.index]] * cell.width;
         drawCircleStack(graphic,color_machine,row, cell.index,cell.origin, radius)
     }else{
         const sub_cell_width = cell.width / sub_dim;
         const sub_cell_height = cell.height / sub_dim;
-        const color_value = row.default_color[cell.index] / shape_properties.colors
-        const sub_color_value = row.subshapes_color[cell.index] / shape_properties.colors
-        let cvs = [color_value];
-        cvs.push(sub_color_value)
-        for(let i = 2; i < sub_dim * sub_dim; i++)
-            cvs.push(1 - cvs[i - 2])
+        // const sub_color_value = row.subshapes_color[cell.index] / shape_properties.default_colors
+        // let cvs = [color_value];
+        // cvs.push(sub_color_value)
+        // for(let i = 2; i < sub_dim * sub_dim; i++)
+        //     cvs.push(1 - cvs[i - 2])
         for(let x = 0; x < sub_dim; x++){
             for(let y = 0; y < sub_dim; y++){
                 let sub_origin = {
@@ -32,15 +32,18 @@ export var DrawCircle = (graphic,color_machine,row, cell) => {
 }
 
 function drawCircleStack(graphic,color_machine,row,cell_index,cell_origin, radius){
-    const def_color_value = row.default_color[cell_index] / shape_properties.colors
+    const def_color_value = row.default_colors[cell_index] / shape_properties.default_colors
     for(let i = cell_index; i >= 0; i--){
-        let co = color_machine(def_color_value / (i + 1)).rgba()
+        let co = color_machine(def_color_value).rgba()
         co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell_index]]
         graphic.fill(co)
         graphic.circle(cell_origin.cx, cell_origin.cy, radius,radius)
     }
 }
 
+
+// triangles not updated to fit new modular data_grid_allocation
+// also corners are kinda broken
 export var DrawTriangle = (graphic,color_machine,row, cell) => {
     graphic.strokeWeight(0)
     const sub_dim = shape_properties.subshapes[row.subshapes[cell.index]];
@@ -50,8 +53,8 @@ export var DrawTriangle = (graphic,color_machine,row, cell) => {
     }else{
         const sub_cell_width = cell.width / sub_dim;
         const sub_cell_height = cell.height / sub_dim;
-        const color_value = row.default_color[cell.index] / shape_properties.colors
-        const sub_color_value = row.subshapes_color[cell.index] / shape_properties.colors
+        const color_value = row.default_color[cell.index] / shape_properties.default_colors
+        const sub_color_value = row.subshapes_color[cell.index] / shape_properties.default_colors
         let index = 0;
         let cvs = [color_value];
         cvs.push(sub_color_value)
@@ -94,7 +97,7 @@ function drawTriangleStack(graphic,color_machine,row, cell_origin, cell, radius)
                 y: cell_origin.cy - radius
             },
         ]
-        const color_value = row.default_color[cell.index] / shape_properties.colors
+        const color_value = row.default_color[cell.index] / shape_properties.default_colors
         // Array.from(new Set(row.rotations).values()).map((r_index,i) => {
             let r_index = 0;
             let co = color_machine(color_value).rgba()

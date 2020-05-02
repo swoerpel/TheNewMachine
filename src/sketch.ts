@@ -17,6 +17,7 @@ var sketch = function (p: p5) {
   }
 
   function setupGraphics(){
+
     canvas = p.createCanvas(params.canvas.width, params.canvas.height);
     canvas.background('black')
     graphic = p.createGraphics(params.canvas.width, params.canvas.height)
@@ -31,7 +32,7 @@ var sketch = function (p: p5) {
   }
 
   function incDrawIndex(){
-    let k_offset = img1.dataGenerators.default.color.kernel.dims.y
+    let k_offset = img1.dataGenerators.default_colors.kernel.dims.y
     if(params.draw.mode == 'fixed'){
       draw_index = draw_index + 1
       if(draw_index == params.images[image_index].grid.height + k_offset){
