@@ -94,7 +94,6 @@ function drawTriangleStack(graphic,color_machine,row, cell_origin, cell, radius)
                 y: cell_origin.cy - radius
             },
         ]
-        console.log(points)
         const color_value = row.default_color[cell.index] / shape_properties.colors
         // Array.from(new Set(row.rotations).values()).map((r_index,i) => {
             let r_index = 0;

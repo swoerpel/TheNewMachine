@@ -1,6 +1,6 @@
 
 export var shape_properties = {
-  colors: 2,
+  colors: 3,
   rotations:[0],
   shape_sizes:[1,1],
   subshapes:[1], //1x1, 2x2, 3x3
@@ -23,7 +23,7 @@ export var params = {
         height: 9,
       },
       kernel: 'A',
-      shape: 'triangle',
+      shape: 'circle',
       init_row: {
         mode: 4, 
         group_size: 7

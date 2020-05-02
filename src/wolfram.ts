@@ -21,7 +21,7 @@ export class Wolfram {
     constructor(private params: WolframParams){
         this.init_row_machine = new InitRowGenerator();
         this.param_machine = new ParameterGenerator();
-        console.log('WOLFRAM PARAMS LOW ->', params)
+        // console.log('WOLFRAM PARAMS LOW ->', params)
     }
 
 
@@ -31,6 +31,7 @@ export class Wolfram {
         this.initStartRows();
         this.initTotalisticNeighborhoods();
         this.seed = this.param_machine.rand_int(this.params.base,this.seed_length)
+        // console.log(this.params.type,' seed ->' ,this.seed)
     }
 
     initKernel(){
@@ -64,6 +65,7 @@ export class Wolfram {
             if(!this.neighborhoods.includes(avg))
                 this.neighborhoods.push(avg)
         }
+        // console.log('this.neighborhoods',this.neighborhoods)
         this.seed_length = this.neighborhoods.length
     }
 
