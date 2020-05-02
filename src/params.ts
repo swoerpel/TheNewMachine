@@ -2,32 +2,32 @@
 export var shape_properties = {
   colors: 4,
   rotations:[0,180],
-  shape_sizes:[1,1],
-  subshapes:[1,2], //1x1, 2x2, 3x3
+  shape_sizes:[.5,1,1],
+  subshapes:[1], //1x1, 2x2, 3x3
   subshape_sizes:[1],
-  color_alpha_values: [.25,.5,.75 ]
+  color_alpha_values: [.05]
 }
 
 
 export var params = {
   canvas: {
-    width: 3200,
-    height: 3200 * 4
+    width: 4800,
+    height: 4800
   },
 
 
   images: [
     {
       grid: {
-        width: 16,
-        height: 16 * 4,
+        width: 32,
+        height: 32,
       },
-      mode: 0,
+      mode: 1,
       kernel: 'B',
       shape: 'triangle',
       init_row: {
-        mode: 1 , 
-        group_size: 3 
+        mode: 1, 
+        group_size: 7
       },
     },
     {

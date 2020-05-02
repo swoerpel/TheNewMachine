@@ -45,7 +45,8 @@ export var DrawTriangle = (graphic,color_machine,row, cell) => {
     graphic.strokeWeight(0)
     const sub_dim = shape_properties.subshapes[row.subshapes[cell.index]];
     if(sub_dim === 1){
-        drawTriangleStack(graphic,color_machine,row, cell.origin, cell)
+        let radius = shape_properties.shape_sizes[row.shape_sizes[cell.index]] * cell.width;
+        drawTriangleStack(graphic,color_machine,row, cell.origin, cell, radius)
     }else{
         const sub_cell_width = cell.width / sub_dim;
         const sub_cell_height = cell.height / sub_dim;
@@ -64,8 +65,8 @@ export var DrawTriangle = (graphic,color_machine,row, cell) => {
                     cx: cell.origin.x + x * sub_cell_width + sub_cell_width / 2,
                     cy: cell.origin.y + y * sub_cell_height + sub_cell_height / 2,
                 }
-                cell.origin = sub_origin
-                drawTriangleStack(graphic,color_machine,row,sub_origin,cell )
+                let radius = shape_properties.subshape_sizes[row.subshape_sizes[cell.index]] * sub_cell_width;
+                drawTriangleStack(graphic,color_machine,row,sub_origin,cell,radius)
                 index += 1;
             }
         }
@@ -73,30 +74,31 @@ export var DrawTriangle = (graphic,color_machine,row, cell) => {
  
 }
 
-function drawTriangleStack(graphic,color_machine,row, cell_origin, cell){
+function drawTriangleStack(graphic,color_machine,row, cell_origin, cell, radius){
     for(let i = cell.index; i >= 0; i--){
-        let radius = shape_properties.shape_sizes[row.shape_sizes[i]];
         let points = [
             {
                 x: cell_origin.cx,
                 y: cell_origin.cy,
             },
             {
-                x: cell_origin.cx + cell.width / 2 * radius,
-                y: cell_origin.cy + cell.height / 2 * radius
+                x: cell_origin.cx + radius,
+                y: cell_origin.cy + radius
             },
             {
-                x: cell_origin.cx - cell.width / 2 * radius,
-                y: cell_origin.cy + cell.height / 2 * radius
+                x: cell_origin.cx - radius,
+                y: cell_origin.cy + radius
             },
             {
-                x: cell_origin.cx - cell.width / 2 * radius,
-                y: cell_origin.cy - cell.height / 2 * radius
+                x: cell_origin.cx - radius,
+                y: cell_origin.cy - radius
             },
         ]
+        console.log(points)
         const color_value = row.default_color[cell.index] / shape_properties.colors
-        Array.from(new Set(row.rotations).values()).map((r_index,i) => {
-            let co = color_machine(color_value / (1 + i)).rgba()
+        // Array.from(new Set(row.rotations).values()).map((r_index,i) => {
+            let r_index = 0;
+            let co = color_machine(color_value).rgba()
             co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
             graphic.fill(co)
             graphic.beginShape();
@@ -105,7 +107,7 @@ function drawTriangleStack(graphic,color_machine,row, cell_origin, cell){
                 graphic.vertex(p.x,p.y)
             })
             graphic.endShape();
-        })
+        // })
     }
 }
 
