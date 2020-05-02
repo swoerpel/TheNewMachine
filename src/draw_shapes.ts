@@ -1,18 +1,16 @@
 import { shape_properties } from './params';
 
 export var DrawCircle = (graphic,color_machine,row, cell) => {
+    graphic.strokeWeight(0)
     const sub_dim = shape_properties.subshapes[row.subshapes[cell.index]];
-    
     if(sub_dim === 1){
         drawCircleStack(graphic,color_machine,row, cell)
     }else{
-        // console.log('sub_dim',sub_dim,row.subshapes[cell.index])
         const sub_cell_width = cell.width / sub_dim;
         const sub_cell_height = cell.height / sub_dim;
         const color_value = row.default_color[cell.index] / shape_properties.colors
         const sub_color_value = row.subshapes_color[cell.index] / shape_properties.colors
         let index = 0;
-        // const sub_color_step = (color_value - sub_color_value) / (sub_dim - 1)
         let cvs = [color_value];
         cvs.push(sub_color_value)
         for(let i = 2; i < sub_dim * sub_dim; i++)
@@ -23,12 +21,14 @@ export var DrawCircle = (graphic,color_machine,row, cell) => {
                     x: cell.origin.x + x * sub_cell_width,
                     y: cell.origin.y + y * sub_cell_height
                 }
-                let co = color_machine(cvs[index]).rgba()
+                for(let i = cell.index; i >= 0; i--){
+                    let co = color_machine(cvs[index]  / (i + 1)).rgba()
+                    co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
+                    graphic.fill(co)
+                    let radius = shape_properties.subshape_sizes[row.subshape_sizes[i]] * sub_cell_width;
+                    graphic.circle(sub_origin.x + sub_cell_width / 2, sub_origin.y + sub_cell_height / 2, radius)
+                }
                 index += 1;
-                co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
-                graphic.fill(co)
-                let radius = shape_properties.shape_sizes[row.shape_sizes[cell.index]] * sub_cell_width;
-                graphic.circle(sub_origin.x + sub_cell_width / 2, sub_origin.y + sub_cell_height / 2, radius)
             }
         }
     }
@@ -36,12 +36,14 @@ export var DrawCircle = (graphic,color_machine,row, cell) => {
 }
 
 function drawCircleStack(graphic,color_machine,row,cell){
-    const color_value = row.default_color[cell.index] / shape_properties.colors
-    let co = color_machine(color_value).rgba()
-    co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
-    graphic.fill(co)
-    let radius = shape_properties.shape_sizes[row.shape_sizes[cell.index]] * cell.width;
-    graphic.circle(cell.origin.cx, cell.origin.cy, radius)
+    const def_color_value = row.default_color[cell.index] / shape_properties.colors
+    for(let i = cell.index; i >= 0; i--){
+        let co = color_machine(def_color_value / (i + 1)).rgba()
+        co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
+        graphic.fill(co)
+        let radius = shape_properties.shape_sizes[row.shape_sizes[i]] * cell.width;
+        graphic.circle(cell.origin.cx, cell.origin.cy, radius)
+    }
 }
 
 
