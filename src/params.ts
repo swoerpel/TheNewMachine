@@ -1,7 +1,7 @@
 
 export var shape_properties = {
   colors: 4,
-  rotations:[0,90,180],
+  rotations:[0,180],
   shape_sizes:[1,1],
   subshapes:[1,2], //1x1, 2x2, 3x3
   subshape_sizes:[1],
@@ -11,16 +11,16 @@ export var shape_properties = {
 
 export var params = {
   canvas: {
-    width: 4800,
-    height: 4800
+    width: 3200,
+    height: 3200 * 4
   },
 
 
   images: [
     {
       grid: {
-        width: 10,
-        height: 8,
+        width: 16,
+        height: 16 * 4,
       },
       mode: 0,
       kernel: 'B',

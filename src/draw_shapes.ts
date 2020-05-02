@@ -3,7 +3,6 @@ import { shape_properties } from './params';
 export var DrawCircle = (graphic,color_machine,row, cell) => {
     graphic.strokeWeight(0)
     graphic.ellipseMode(graphic.CENTER)
-    console.log('origin',cell.origin)
     const sub_dim = shape_properties.subshapes[row.subshapes[cell.index]];
     if(sub_dim === 1){
         let radius = shape_properties.shape_sizes[row.shape_sizes[cell.index]] * cell.width;
@@ -13,12 +12,10 @@ export var DrawCircle = (graphic,color_machine,row, cell) => {
         const sub_cell_height = cell.height / sub_dim;
         const color_value = row.default_color[cell.index] / shape_properties.colors
         const sub_color_value = row.subshapes_color[cell.index] / shape_properties.colors
-        let index = 0;
         let cvs = [color_value];
         cvs.push(sub_color_value)
         for(let i = 2; i < sub_dim * sub_dim; i++)
             cvs.push(1 - cvs[i - 2])
-        // for(let n = 0; n < sub_dim; n++){
         for(let x = 0; x < sub_dim; x++){
             for(let y = 0; y < sub_dim; y++){
                 let sub_origin = {
@@ -29,7 +26,6 @@ export var DrawCircle = (graphic,color_machine,row, cell) => {
                 }
                 let radius = shape_properties.subshape_sizes[row.subshape_sizes[cell.index]] * sub_cell_width;
                 drawCircleStack(graphic,color_machine,row, cell.index,sub_origin, radius)
-                index += 1;
             }
         }
     }
@@ -106,7 +102,6 @@ function drawTriangleStack(graphic,color_machine,row, cell_origin, cell){
             graphic.beginShape();
             let rotation_val = shape_properties.rotations[row.rotations[cell.index] + r_index]
             rotatePoints(points,cell.origin,rotation_val).map((p) => {
-                console.log(points)
                 graphic.vertex(p.x,p.y)
             })
             graphic.endShape();
