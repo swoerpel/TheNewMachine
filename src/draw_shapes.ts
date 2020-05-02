@@ -1,13 +1,57 @@
-import { default_shape_properties } from './params';
+import { shape_properties } from './params';
 
 export var DrawCircle = (graphic,color_machine,row, cell) => {
-    let color_value = row.default_color[cell.index] / default_shape_properties.colors
+    const sub_dim = shape_properties.subshapes[row.subshapes[cell.index]];
+    
+    if(sub_dim === 1){
+        drawCircleStack(graphic,color_machine,row, cell)
+    }else{
+        // console.log('sub_dim',sub_dim,row.subshapes[cell.index])
+        const sub_cell_width = cell.width / sub_dim;
+        const sub_cell_height = cell.height / sub_dim;
+        const color_value = row.default_color[cell.index] / shape_properties.colors
+        const sub_color_value = row.subshapes_color[cell.index] / shape_properties.colors
+        let index = 0;
+        // const sub_color_step = (color_value - sub_color_value) / (sub_dim - 1)
+        let cvs = [color_value];
+        cvs.push(sub_color_value)
+        for(let i = 2; i < sub_dim * sub_dim; i++)
+            cvs.push(1 - cvs[i - 2])
+        for(let x = 0; x < sub_dim; x++){
+            for(let y = 0; y < sub_dim; y++){
+                let sub_origin = {
+                    x: cell.origin.x + x * sub_cell_width,
+                    y: cell.origin.y + y * sub_cell_height
+                }
+                let co = color_machine(cvs[index]).rgba()
+                index += 1;
+                co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
+                graphic.fill(co)
+                let radius = shape_properties.shape_sizes[row.shape_sizes[cell.index]] * sub_cell_width;
+                graphic.circle(sub_origin.x + sub_cell_width / 2, sub_origin.y + sub_cell_height / 2, radius)
+            }
+        }
+    }
+ 
+}
+
+function drawCircleStack(graphic,color_machine,row,cell){
+    const color_value = row.default_color[cell.index] / shape_properties.colors
     let co = color_machine(color_value).rgba()
-    co[3] = 255 * default_shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
+    co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell.index]]
     graphic.fill(co)
-    let radius = default_shape_properties.shape_sizes[row.shape_sizes[cell.index]] * cell.width;
+    let radius = shape_properties.shape_sizes[row.shape_sizes[cell.index]] * cell.width;
     graphic.circle(cell.origin.cx, cell.origin.cy, radius)
 }
+
+
+
+
+
+
+
+
+
 
 
 export var DrawTriangle = (graphic,row,origin, cell, color_machine) => {

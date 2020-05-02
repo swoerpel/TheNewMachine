@@ -1,4 +1,4 @@
-import { params, default_shape_properties, wolfram_kernels } from './params'
+import { params, shape_properties, wolfram_kernels } from './params'
 import { Wolfram } from './wolfram';
 import { WolframParams } from './models/wolfram_params.model';
 import * as chroma from 'chroma.ts';
@@ -20,7 +20,7 @@ export class WolframImage{
     img_params: Partial<WolframParams>;
     constructor(image_index){
         this.img_params = params.images[image_index];
-        let data_grid_keys = Object.keys(default_shape_properties)
+        let data_grid_keys = Object.keys(shape_properties)
 
         data_grid_keys.push('default')
         data_grid_keys.map((key) =>{
@@ -81,9 +81,9 @@ export class WolframImage{
             color: Object.assign({}, this.img_params),
             [primary_grid_type]: Object.assign({}, this.img_params),
         }
-        let base =  default_shape_properties.shape_sizes.length 
+        let base =  shape_properties.shape_sizes.length 
         if(primary_grid_type === 'default')
-            base = default_shape_properties.colors;
+            base = shape_properties.colors;
         dataGridParamsPair[primary_grid_type].base = base
         dataGridParamsPair.color.base = base;
         let primary_grid = new Wolfram(<WolframParams>dataGridParamsPair[primary_grid_type])
@@ -108,7 +108,7 @@ export class WolframImage{
 
     private initTriangle(){
         let rotation_params = Object.assign({}, this.img_params);
-        rotation_params.base = default_shape_properties.rotations.length;
+        rotation_params.base = shape_properties.rotations.length;
         this.dataGenerators['rotation'] = new Wolfram(<WolframParams>rotation_params);
     }
 

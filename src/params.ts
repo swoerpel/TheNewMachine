@@ -1,11 +1,11 @@
 
-export var default_shape_properties = {
+export var shape_properties = {
   colors: 4,
   rotations:[0],
-  shape_sizes:[1,1],
-  subshapes:[1], //1x1, 2x2, 3x3
+  shape_sizes:[1,2,4],
+  subshapes:[1,2], //1x1, 2x2, 3x3
   subshape_sizes:[1],
-  color_alpha_values: [1]
+  color_alpha_values: [.25,.5,1]
 }
 
 
@@ -25,8 +25,8 @@ export var params = {
   images: [
     {
       grid: {
-        width: 90,
-        height: 90,
+        width: 8,
+        height: 8 ,
       },
       mode: 0,
       kernel: 'B',
