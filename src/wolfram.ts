@@ -11,7 +11,7 @@ export class Wolfram {
     kernel_machine: KernelGenerator;
     kernel: Kernel;
     current_rows: number[][] = [];
-    init_rows: number[][] = [];
+    public init_rows: number[][] = [];
     next_row: string[] = [];
     seed_length: number;
     neighborhoods: any[] = [];
@@ -46,6 +46,7 @@ export class Wolfram {
                 this.params.init_row.group_size + i
             )
             this.init_rows.push(row)
+            console.log('init row ', i + 1, row)
             this.current_rows.push(row)
         }
     }
@@ -63,9 +64,12 @@ export class Wolfram {
             if(!this.neighborhoods.includes(avg))
                 this.neighborhoods.push(avg)
         }
-        // console.log('this.neighborhoods',this.neighborhoods)
         this.seed_length = this.neighborhoods.length
         console.log(this.params.type,'this.neighborhoods',this.neighborhoods, this.seed_length)
+    }
+
+    getInitRows(){
+        return this.init_rows;
     }
 
     generateRow(){

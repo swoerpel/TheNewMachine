@@ -9,7 +9,7 @@ var sketch = function (p: p5) {
   var graphic;
   var img1;
   var image_index = 0;
-  var draw_index;
+  var row_index;
   
   p.setup = function () {
     setupGraphics()
@@ -28,25 +28,23 @@ var sketch = function (p: p5) {
     img1 = new WolframImage(image_index);
     img1.setGraphic(graphic);
     img1.setColors(prev_color_palette);
-    draw_index = 0
+    row_index = img1.drawInitRows(prev_color_palette);
   }
 
   function incDrawIndex(){
-    let k_offset = img1.dataGenerators.default_colors.kernel.dims.y
     if(params.draw.mode == 'fixed'){
-      draw_index = draw_index + 1
-      if(draw_index == params.images[image_index].grid.height + k_offset){
+      if(row_index == params.images[image_index].grid.height){
         pause = true;
-        draw_index = 0;
+        row_index = 0;
       }
+      row_index = row_index + 1
     } else if(params.draw.mode == 'cycle'){
-      draw_index = (draw_index + 1) % (params.images[image_index].grid.height); 
-      // draw_index = (draw_index + 1) % (params.images[image_index].grid.height + k_offset); 
+      row_index = (row_index + 1) % (params.images[image_index].grid.height); 
     }
   }
 
   function drawImageRow(){
-    img1.drawRow(draw_index)
+    img1.drawRow(row_index)
     p.image(graphic, 0, 0)
     incDrawIndex();
   }
@@ -65,7 +63,7 @@ var sketch = function (p: p5) {
       case "s": pause = true; drawImageRow();                     break;
       case "g": img1.graphic.background(0); p.image(graphic,0,0); break;
       case "r": setupImages(img1.color_palette);                  break;
-      case "d": draw_index = 0;                                   break;
+      case "d": row_index = 0;                                   break;
     }
   }
 }

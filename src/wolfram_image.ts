@@ -3,7 +3,7 @@ import { Wolfram } from './wolfram';
 import { WolframParams } from './models/wolfram_params.model';
 import * as chroma from 'chroma.ts';
 import { chromotome_palettes } from './chromotome';
-import { DrawCircle, DrawTriangle } from './draw_shapes';
+import { DrawCircle, DrawTriangle, DrawDebug } from './draw_shapes';
 
 export class WolframImage{
     dataGenerators: any = {};
@@ -13,9 +13,13 @@ export class WolframImage{
     draw_index = 0;
     color_palette: string;
     img_params: any;//Partial<WolframParams>;
-
-
+    data_generator_props: any;
+    default_type: string;
     dataGridGroupPropsLUT = {
+        'debug':[
+            { type:'default_colors', base: shape_properties.default_colors} ,
+        ],
+
         'circle' : [
             { type:'default_colors', base: shape_properties.default_colors} ,
             { type:'shape_sizes', base: shape_properties.shape_sizes.length} ,
@@ -27,8 +31,11 @@ export class WolframImage{
 
     constructor(image_index){
         this.img_params = params.images[image_index];
-        const data_grid_props = [...this.dataGridGroupPropsLUT['circle']]
-        data_grid_props.map((prop) =>{
+        const draw_mode = params.images[0].shape;
+        this.data_generator_props = [...this.dataGridGroupPropsLUT[draw_mode]]
+        this.default_type = this.data_generator_props[0].type
+
+        this.data_generator_props.map((prop) =>{
             this.dataGenerators[prop.type] = this.dataGridFactory(prop.type, prop.base);
         })
         console.log('this.dataGenerators',this.dataGenerators)
@@ -44,21 +51,47 @@ export class WolframImage{
         return data_grid
     }
 
+    drawInitRows(){
+        this.graphic.strokeWeight(0);
+        console.log('data_generator_props',this.data_generator_props)
+        let init_row_group:any = {}
+        let init_row_count;
+        Object.entries(this.dataGenerators).forEach(([data_type,data_grid]:[any,any], index) => {
+            for(let row_index = 0; row_index < data_grid.init_rows.length; row_index++){  
+                init_row_group[data_type] = [...data_grid.init_rows[row_index]]
+            }
+            init_row_count = data_grid.init_rows.length
+        })
+
+        const grid_width = init_row_group[this.default_type].length
+        for(let row_index = 0; row_index < init_row_count; row_index++){
+            for(let cell_index = 0; cell_index < grid_width; cell_index++){
+                let cell = this.getCellParams(cell_index,row_index)
+                this.drawShapeLUT[params.images[0].shape](this.graphic, this.color_machine, init_row_group, cell);
+            }
+        }
+        console.log('init_row_group',init_row_group)
+        return init_row_count;
+    }
+
+
     drawRow(row_index){
         this.graphic.strokeWeight(0);
         let row_group:any = {}
-        Object.entries(this.dataGenerators).forEach(([key,value]:[any,any]) => {
-            row_group[key] = [...value.generateRow()]
+        Object.entries(this.dataGenerators).forEach(([data_type,data_grid]:[any,any]) => {
+            row_group[data_type] = [...data_grid.generateRow()]
         })
+        console.log('row_group',row_group)
+
         for(let cell_index = 0; cell_index < row_group.default_colors.length; cell_index++){
             let cell = this.getCellParams(cell_index,row_index)
-            this.graphic.translate(-cell.width / 2,-cell.height / 2)
             this.drawShapeLUT[params.images[0].shape](this.graphic, this.color_machine, row_group, cell);
-            this.graphic.translate(cell.width / 2,cell.height / 2)
+            
         }
     }
 
     drawShapeLUT = {
+        'debug': (graphic, color_machine, row_group, cell) => DrawDebug(graphic, color_machine, row_group, cell),
         'circle': (graphic, color_machine, row_group, cell) => DrawCircle(graphic, color_machine, row_group, cell),
         'triangle': (graphic, color_machine, row_group, cell) => DrawTriangle(graphic, color_machine, row_group, cell),
     }

@@ -1,21 +1,27 @@
 import { shape_properties } from './params';
 
+export var DrawDebug = (graphic,color_machine,row, cell) => {
+    graphic.translate(-cell.width / 2,-cell.height / 2)
+
+    const cv = row.default_colors[cell.index] / shape_properties.default_colors
+    graphic.fill(color_machine(cv).hex())
+    graphic.rect(cell.origin.cx, cell.origin.cy, cell.width, cell.height)
+    graphic.translate(cell.width / 2,cell.height / 2)
+
+}
+
 export var DrawCircle = (graphic,color_machine,row, cell) => {
+    graphic.translate(-cell.width / 2,-cell.height / 2)
+
     graphic.strokeWeight(0)
     graphic.ellipseMode(graphic.CENTER)
     const sub_dim = shape_properties.subshapes[row.subshapes[cell.index]];
     if(sub_dim === 1){
-    // if(true){
         let radius = shape_properties.shape_sizes[row.shape_sizes[cell.index]] * cell.width;
         drawCircleStack(graphic,color_machine,row, cell.index,cell.origin, radius)
     }else{
         const sub_cell_width = cell.width / sub_dim;
         const sub_cell_height = cell.height / sub_dim;
-        // const sub_color_value = row.subshapes_color[cell.index] / shape_properties.default_colors
-        // let cvs = [color_value];
-        // cvs.push(sub_color_value)
-        // for(let i = 2; i < sub_dim * sub_dim; i++)
-        //     cvs.push(1 - cvs[i - 2])
         for(let x = 0; x < sub_dim; x++){
             for(let y = 0; y < sub_dim; y++){
                 let sub_origin = {
@@ -29,6 +35,7 @@ export var DrawCircle = (graphic,color_machine,row, cell) => {
             }
         }
     }
+    graphic.translate(cell.width / 2,cell.height / 2)
 }
 
 function drawCircleStack(graphic,color_machine,row,cell_index,cell_origin, radius){
