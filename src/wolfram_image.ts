@@ -51,11 +51,10 @@ export class WolframImage{
             row_group[key] = [...value.generateRow()]
         })
         for(let cell_index = 0; cell_index < row_group.default_colors.length; cell_index++){
-            let cell = this.getCell(cell_index,row_index)
-            const offset = this.dataGenerators.default_colors.kernel.dims.y; 
-            this.graphic.translate(0,-cell.height * offset)
+            let cell = this.getCellParams(cell_index,row_index)
+            this.graphic.translate(-cell.width / 2,-cell.height / 2)
             this.drawShapeLUT[params.images[0].shape](this.graphic, this.color_machine, row_group, cell);
-            this.graphic.translate(0,cell.height * offset)
+            this.graphic.translate(cell.width / 2,cell.height / 2)
         }
     }
 
@@ -64,7 +63,7 @@ export class WolframImage{
         'triangle': (graphic, color_machine, row_group, cell) => DrawTriangle(graphic, color_machine, row_group, cell),
     }
 
-    getCell(cell_index, row_index){
+    getCellParams(cell_index, row_index){
         const cell_width = params.canvas.width / this.img_params.grid.width
         const cell_height = params.canvas.height / this.img_params.grid.height
         return {

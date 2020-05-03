@@ -40,8 +40,8 @@ var sketch = function (p: p5) {
         draw_index = 0;
       }
     } else if(params.draw.mode == 'cycle'){
-      // draw_index = (draw_index + 1) % (params.images[image_index].grid.height); 
-      draw_index = (draw_index + 1) % (params.images[image_index].grid.height + k_offset); 
+      draw_index = (draw_index + 1) % (params.images[image_index].grid.height); 
+      // draw_index = (draw_index + 1) % (params.images[image_index].grid.height + k_offset); 
     }
   }
 

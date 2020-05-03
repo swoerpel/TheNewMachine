@@ -4,6 +4,7 @@ export interface WolframParams {
     base: number;
     kernel: string;
     shape: string;
+    type: string;
     grid: {width:number, height: number};
     init_row: {
         mode: number;

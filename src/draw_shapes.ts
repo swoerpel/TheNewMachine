@@ -37,7 +37,8 @@ function drawCircleStack(graphic,color_machine,row,cell_index,cell_origin, radiu
         let co = color_machine(def_color_value).rgba()
         co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell_index]]
         graphic.fill(co)
-        graphic.circle(cell_origin.cx, cell_origin.cy, radius,radius)
+        graphic.rect(cell_origin.cx, cell_origin.cy, radius,radius)
+        // graphic.circle(cell_origin.cx, cell_origin.cy, radius,radius)
     }
 }
 

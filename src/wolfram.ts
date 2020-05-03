@@ -1,6 +1,5 @@
 import { KernelGenerator } from './kernel_generator';
 import { InitRowGenerator } from './init_row_generator';
-import { wolfram_modes } from './params';
 import { Kernel } from './models/kernel.model';
 import { WolframParams } from './models/wolfram_params.model';
 import { ParameterGenerator } from './parameter_generator';
@@ -21,7 +20,6 @@ export class Wolfram {
     constructor(private params: WolframParams){
         this.init_row_machine = new InitRowGenerator();
         this.param_machine = new ParameterGenerator();
-        // console.log('WOLFRAM PARAMS LOW ->', params)
     }
 
 
@@ -52,9 +50,9 @@ export class Wolfram {
         }
     }
 
-    // totalistic only
     initTotalisticNeighborhoods(){
         this.neighborhoods = [];
+        
         let pad = (num, places) => String(num).padStart(places, '0')
         let seed_length = Math.pow(this.params.base,this.kernel.length)
         for(let i = 0; i < seed_length; i++){
@@ -67,6 +65,7 @@ export class Wolfram {
         }
         // console.log('this.neighborhoods',this.neighborhoods)
         this.seed_length = this.neighborhoods.length
+        console.log(this.params.type,'this.neighborhoods',this.neighborhoods, this.seed_length)
     }
 
     generateRow(){

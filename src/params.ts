@@ -3,9 +3,9 @@ export var shape_properties = {
   default_colors: 3,
   rotations:[0],
   shape_sizes:[1,1],
-  subshapes:[0.5,1,2], //1x1, 2x2, 3x3
-  subshape_sizes:[1,0.5],
-  color_alpha_values: [0.5,1]
+  subshapes:[1,1], //1x1, 2x2, 3x3
+  subshape_sizes:[1,1],
+  color_alpha_values: [1,1]
 }
 
 
