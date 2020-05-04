@@ -10,12 +10,13 @@ export class Wolfram {
     param_machine: ParameterGenerator;
     kernel_machine: KernelGenerator;
     kernel: Kernel;
-    current_rows: number[][] = [];
-    public init_rows: number[][] = [];
     next_row: string[] = [];
     seed_length: number;
     neighborhoods: any[] = [];
     seed: string;
+
+    public init_rows: number[][] = [];
+    public current_rows: number[][] = [];
 
     constructor(private params: WolframParams){
         this.init_row_machine = new InitRowGenerator();
@@ -23,12 +24,13 @@ export class Wolfram {
     }
 
 
-    Initialize(){
+    Initialize(seed = ''){
         this.next_row = new Array(this.params.grid.width).fill(0);
         this.initKernel();
         this.initStartRows();
         this.initTotalisticNeighborhoods();
-        this.seed = this.param_machine.rand_int(this.params.base,this.seed_length)
+        if(seed == '')
+            this.seed = this.param_machine.rand_int(this.params.base,this.seed_length)
         // console.log(this.params.type,' seed ->' ,this.seed)
     }
 
@@ -38,22 +40,19 @@ export class Wolfram {
     }
 
     initStartRows(){
-        for(let i = 0; i < this.kernel.dims.y; i++){
+        for(let row_index = 0; row_index < this.kernel.dims.y; row_index++){
             let row = this.init_row_machine.generate_row(
-                this.params.init_row.mode,
+                row_index,
                 this.params.base,
-                this.params.grid.width,
-                this.params.init_row.group_size + i
+                this.params.grid.width
             )
             this.init_rows.push(row)
-            console.log('init row ', i + 1, row)
             this.current_rows.push(row)
         }
     }
 
     initTotalisticNeighborhoods(){
         this.neighborhoods = [];
-        
         let pad = (num, places) => String(num).padStart(places, '0')
         let seed_length = Math.pow(this.params.base,this.kernel.length)
         for(let i = 0; i < seed_length; i++){
@@ -65,7 +64,7 @@ export class Wolfram {
                 this.neighborhoods.push(avg)
         }
         this.seed_length = this.neighborhoods.length
-        console.log(this.params.type,'this.neighborhoods',this.neighborhoods, this.seed_length)
+        // console.log(this.params.type,'this.neighborhoods',this.neighborhoods, this.seed_length)
     }
 
     getInitRows(){

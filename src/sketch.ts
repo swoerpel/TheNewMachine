@@ -22,6 +22,8 @@ var sketch = function (p: p5) {
     canvas.background('black')
     graphic = p.createGraphics(params.canvas.width, params.canvas.height)
     graphic.stroke('white')
+    graphic.strokeWeight(0);
+
   }
 
   function setupImages(prev_color_palette = ''){
@@ -33,11 +35,11 @@ var sketch = function (p: p5) {
 
   function incDrawIndex(){
     if(params.draw.mode == 'fixed'){
+      row_index = row_index + 1
       if(row_index == params.images[image_index].grid.height){
         pause = true;
         row_index = 0;
       }
-      row_index = row_index + 1
     } else if(params.draw.mode == 'cycle'){
       row_index = (row_index + 1) % (params.images[image_index].grid.height); 
     }
@@ -62,7 +64,7 @@ var sketch = function (p: p5) {
       case "c": img1.refreshColorMachine(); drawImageRow();       break;
       case "s": pause = true; drawImageRow();                     break;
       case "g": img1.graphic.background(0); p.image(graphic,0,0); break;
-      case "r": setupImages(img1.color_palette);                  break;
+      case "r": setupImages(img1.color_palette); (params.draw.mode == 'fixed') ? pause = !pause : pause = pause                 break;
       case "d": row_index = 0;                                   break;
     }
   }

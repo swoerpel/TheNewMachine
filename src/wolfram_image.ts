@@ -15,6 +15,7 @@ export class WolframImage{
     img_params: any;//Partial<WolframParams>;
     data_generator_props: any;
     default_type: string;
+
     dataGridGroupPropsLUT = {
         'debug':[
             { type:'default_colors', base: shape_properties.default_colors} ,
@@ -29,12 +30,17 @@ export class WolframImage{
         ]
     }
 
+    drawShapeLUT = {
+        'debug': (graphic, color_machine, row_group, cell) => DrawDebug(graphic, color_machine, row_group, cell),
+        'circle': (graphic, color_machine, row_group, cell) => DrawCircle(graphic, color_machine, row_group, cell),
+        'triangle': (graphic, color_machine, row_group, cell) => DrawTriangle(graphic, color_machine, row_group, cell),
+    }
+
     constructor(image_index){
         this.img_params = params.images[image_index];
         const draw_mode = params.images[0].shape;
         this.data_generator_props = [...this.dataGridGroupPropsLUT[draw_mode]]
         this.default_type = this.data_generator_props[0].type
-
         this.data_generator_props.map((prop) =>{
             this.dataGenerators[prop.type] = this.dataGridFactory(prop.type, prop.base);
         })
@@ -52,25 +58,32 @@ export class WolframImage{
     }
 
     drawInitRows(){
-        this.graphic.strokeWeight(0);
-        console.log('data_generator_props',this.data_generator_props)
         let init_row_group:any = {}
         let init_row_count;
         Object.entries(this.dataGenerators).forEach(([data_type,data_grid]:[any,any], index) => {
-            for(let row_index = 0; row_index < data_grid.init_rows.length; row_index++){  
-                init_row_group[data_type] = [...data_grid.init_rows[row_index]]
-            }
+            init_row_group[data_type] = {}
+            init_row_group[data_type]['rows'] = []
             init_row_count = data_grid.init_rows.length
+            // console.log(data_type,init_row_group[data_type])
+            for(let row_index = 0; row_index < init_row_count; row_index++){  
+                init_row_group[data_type].rows.push([...data_grid.init_rows[row_index]])
+            }
+            // console.log(init_row_group[data_type])
+            
         })
-
-        const grid_width = init_row_group[this.default_type].length
-        for(let row_index = 0; row_index < init_row_count; row_index++){
+        const grid_width = init_row_group[this.default_type].rows[0].length
+        init_row_group[this.default_type].rows.forEach((init_row, row_index) => {
             for(let cell_index = 0; cell_index < grid_width; cell_index++){
                 let cell = this.getCellParams(cell_index,row_index)
-                this.drawShapeLUT[params.images[0].shape](this.graphic, this.color_machine, init_row_group, cell);
+                // console.log(init_row)
+                this.drawShapeLUT[params.images[0].shape](
+                    this.graphic, 
+                    this.color_machine, 
+                    {'default_colors': init_row}, 
+                    cell
+                );
             }
-        }
-        console.log('init_row_group',init_row_group)
+        })
         return init_row_count;
     }
 
@@ -81,20 +94,13 @@ export class WolframImage{
         Object.entries(this.dataGenerators).forEach(([data_type,data_grid]:[any,any]) => {
             row_group[data_type] = [...data_grid.generateRow()]
         })
-        console.log('row_group',row_group)
-
         for(let cell_index = 0; cell_index < row_group.default_colors.length; cell_index++){
             let cell = this.getCellParams(cell_index,row_index)
             this.drawShapeLUT[params.images[0].shape](this.graphic, this.color_machine, row_group, cell);
-            
         }
     }
 
-    drawShapeLUT = {
-        'debug': (graphic, color_machine, row_group, cell) => DrawDebug(graphic, color_machine, row_group, cell),
-        'circle': (graphic, color_machine, row_group, cell) => DrawCircle(graphic, color_machine, row_group, cell),
-        'triangle': (graphic, color_machine, row_group, cell) => DrawTriangle(graphic, color_machine, row_group, cell),
-    }
+
 
     getCellParams(cell_index, row_index){
         const cell_width = params.canvas.width / this.img_params.grid.width
