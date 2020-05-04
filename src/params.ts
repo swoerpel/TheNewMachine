@@ -1,6 +1,6 @@
 
 export var shape_properties = {
-  default_colors: 4,
+  default_colors: 3,
   rotations:[0],
   shape_sizes:[1,1],
   subshapes:[1,1], //1x1, 2x2, 3x3
@@ -12,21 +12,21 @@ export var shape_properties = {
 export var params = {
   canvas: {
     width: 2400,
-    height: 2400
+    height:2400
   },
 
   images: [
     {
       grid: {
-        width: 120,
-        height: 120,
+        width: 51,
+        height: 51,
       },
-      kernel: 'B',
+      kernel: 'A',
       shape: 'debug',
       init_row: {
         mode: 'center', 
-        group_size: 2,
-        shift: 20,
+        group_size: 1,
+        shift: 0,
       },
     },
   ],
@@ -66,8 +66,9 @@ export var wolfram_kernels = {
       [1,0,1],
       [0,1,0],
       [1,0,1],
+      [0,1,0],
       [1,0,1],
-      [1,0,1],
+      [0,1,0],
       [1,0,1],
   ],
 

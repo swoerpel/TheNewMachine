@@ -18,7 +18,7 @@ export class WolframImage{
 
     dataGridGroupPropsLUT = {
         'debug':[
-            { type:'default_colors', base: shape_properties.default_colors} ,
+            { type:'default_colors', base: shape_properties.default_colors, seed: '1220122'} ,
         ],
 
         'circle' : [
@@ -42,18 +42,18 @@ export class WolframImage{
         this.data_generator_props = [...this.dataGridGroupPropsLUT[draw_mode]]
         this.default_type = this.data_generator_props[0].type
         this.data_generator_props.map((prop) =>{
-            this.dataGenerators[prop.type] = this.dataGridFactory(prop.type, prop.base);
+            this.dataGenerators[prop.type] = this.dataGridFactory(prop.type, prop.base, prop.seed);
         })
         console.log('this.dataGenerators',this.dataGenerators)
     }
     
-    private dataGridFactory(grid_type, base){
+    private dataGridFactory(grid_type, base, seed){
         let data_grid_params = Object.assign({
             base: base,
             type: grid_type,
         }, this.img_params);
         let data_grid = new Wolfram(<WolframParams>data_grid_params)
-        data_grid.Initialize();
+        data_grid.Initialize(seed);
         return data_grid
     }
 

@@ -29,9 +29,11 @@ export class Wolfram {
         this.initKernel();
         this.initStartRows();
         this.initTotalisticNeighborhoods();
+        this.seed = seed;
         if(seed == '')
             this.seed = this.param_machine.rand_int(this.params.base,this.seed_length)
-        // console.log(this.params.type,' seed ->' ,this.seed)
+        
+        console.log(this.params.type,' seed ->' ,this.seed)
     }
 
     initKernel(){
@@ -84,11 +86,12 @@ export class Wolfram {
         for(let i = 0; i < this.params.grid.width; i++){
             let kernel_slice = '';
             for(let j = this.kernel.length - 1; j >= 0; j--){
-                let x_index = (i + this.kernel.offsets[j].x) % (this.params.grid.width)
+                let x_index = (i + this.kernel.offsets[j].x)
                 let y_index = this.kernel.offsets[j].y
-                if(x_index < 0)
-                    x_index = this.params.grid.width + x_index
-                kernel_slice += this.current_rows[y_index][x_index].toString()
+                if(x_index < this.params.grid.width && x_index >= 0)
+                    kernel_slice += this.current_rows[y_index][x_index].toString()
+                else
+                    kernel_slice += '0'
             }
             kernel_slices.push(kernel_slice)
         }

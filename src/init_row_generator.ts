@@ -6,16 +6,14 @@ export class InitRowGenerator{
         this.group_size = params.images[0].init_row.group_size;
      }
     
-    // generate_row(alg_index,base,width,group_size, offset = 0):number[]{
+     rowFunctionLUT = {
+        'random': (base,width) => this.rand_row(base,width),
+        'center': (base,width) => this.group_row(base,width)
+    }
+
     generate_row(row_index,base,width):number[]{
         let row = this.rowFunctionLUT[params.images[0].init_row.mode](base,width)
         return [...this.arrayRotate(row,row_index * params.images[0].init_row.shift)]
-    }
-
-
-    rowFunctionLUT = {
-        'random': (base,width) => this.rand_row(base,width),
-        'center': (base,width) => this.group_row(base,width)
     }
 
     rand_row(base,width): number[]{
