@@ -71,6 +71,7 @@ export class InitRowGenerator{
                     row[i - j] = ((base - 1) - j)
             }
         }
+        console.log('initrow',row)
         return row
     }
 

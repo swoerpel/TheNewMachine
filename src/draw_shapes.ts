@@ -1,14 +1,14 @@
 import { shape_properties } from './params';
+import { round } from './helpers';
 
 export var DrawDebug = (graphic,color_machine,row_group, cell) => {
     graphic.translate(-cell.width / 2,-cell.height / 2)
-
-    // console.log(row)
+    // console.log(cell.index,row_group.default_colors)
     const cv = row_group.default_colors[cell.index] / shape_properties.default_colors
+    // console.log(cv)
     graphic.fill(color_machine(cv).hex())
     graphic.rect(cell.origin.cx, cell.origin.cy, cell.width, cell.height)
     graphic.translate(cell.width / 2,cell.height / 2)
-
 }
 
 export var DrawCircle = (graphic,color_machine,row, cell) => {

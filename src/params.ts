@@ -18,10 +18,10 @@ export var params = {
   images: [
     {
       grid: {
-        width: 51,
-        height: 51,
+        width: 31,
+        height: 31,
       },
-      kernel: 'A',
+      kernel: 'B',
       shape: 'debug',
       init_row: {
         mode: 'center', 
@@ -63,10 +63,6 @@ export var wolfram_kernels = {
   ],
 
   'B':[
-      [1,0,1],
-      [0,1,0],
-      [1,0,1],
-      [0,1,0],
       [1,0,1],
       [0,1,0],
       [1,0,1],

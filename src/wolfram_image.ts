@@ -18,7 +18,7 @@ export class WolframImage{
 
     dataGridGroupPropsLUT = {
         'debug':[
-            { type:'default_colors', base: shape_properties.default_colors, seed: '1220122'} ,
+            { type:'default_colors', base: shape_properties.default_colors, seed: ''} ,
         ],
 
         'circle' : [
@@ -64,18 +64,16 @@ export class WolframImage{
             init_row_group[data_type] = {}
             init_row_group[data_type]['rows'] = []
             init_row_count = data_grid.init_rows.length
-            // console.log(data_type,init_row_group[data_type])
             for(let row_index = 0; row_index < init_row_count; row_index++){  
-                init_row_group[data_type].rows.push([...data_grid.init_rows[row_index]])
+                let init_row = [...data_grid.getInitRow(row_index)]
+                init_row_group[data_type].rows.push(init_row)
             }
-            // console.log(init_row_group[data_type])
-            
         })
         const grid_width = init_row_group[this.default_type].rows[0].length
         init_row_group[this.default_type].rows.forEach((init_row, row_index) => {
             for(let cell_index = 0; cell_index < grid_width; cell_index++){
                 let cell = this.getCellParams(cell_index,row_index)
-                // console.log(init_row)
+                // console.log('init_row',init_row)
                 this.drawShapeLUT[params.images[0].shape](
                     this.graphic, 
                     this.color_machine, 
@@ -94,9 +92,15 @@ export class WolframImage{
         Object.entries(this.dataGenerators).forEach(([data_type,data_grid]:[any,any]) => {
             row_group[data_type] = [...data_grid.generateRow()]
         })
+        console.log('row_group',row_group)
         for(let cell_index = 0; cell_index < row_group.default_colors.length; cell_index++){
             let cell = this.getCellParams(cell_index,row_index)
-            this.drawShapeLUT[params.images[0].shape](this.graphic, this.color_machine, row_group, cell);
+            
+            this.drawShapeLUT[params.images[0].shape](
+                this.graphic, 
+                this.color_machine, 
+                row_group, 
+                cell);
         }
     }
 
