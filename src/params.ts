@@ -18,11 +18,11 @@ export var params = {
   images: [
     {
       grid: {
-        width: 31,
-        height: 31,
+        width: 11,
+        height: 11,
       },
-      kernel: 'B',
-      shape: 'debug',
+      kernel: 'A',
+      shape: 'rectangle',
       init_row: {
         mode: 'center', 
         group_size: 1,

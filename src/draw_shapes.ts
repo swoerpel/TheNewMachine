@@ -10,6 +10,13 @@ export var DrawDebug = (graphic,color_machine,row_group, cell) => {
     graphic.rect(cell.origin.cx, cell.origin.cy, cell.width, cell.height)
     graphic.translate(cell.width / 2,cell.height / 2)
 }
+export var DrawRectangle = (graphic,color_machine,row_group, cell) => {
+    // console.log(cell.index,row_group.default_colors)
+    const cv = row_group.default_colors[cell.index] / shape_properties.default_colors
+    // console.log(cv)
+    graphic.fill(color_machine(cv).hex())
+    graphic.rect(cell.origin.x, cell.origin.y, cell.width, cell.height)
+}
 
 export var DrawCircle = (graphic,color_machine,row, cell) => {
     graphic.translate(-cell.width / 2,-cell.height / 2)

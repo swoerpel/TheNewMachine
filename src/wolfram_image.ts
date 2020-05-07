@@ -3,7 +3,7 @@ import { Wolfram } from './wolfram';
 import { WolframParams } from './models/wolfram_params.model';
 import * as chroma from 'chroma.ts';
 import { chromotome_palettes } from './chromotome';
-import { DrawCircle, DrawTriangle, DrawDebug } from './draw_shapes';
+import { DrawCircle, DrawTriangle, DrawDebug, DrawRectangle } from './draw_shapes';
 
 export class WolframImage{
     dataGenerators: any = {};
@@ -27,6 +27,14 @@ export class WolframImage{
             { type:'subshapes', base: shape_properties.subshapes.length} ,
             { type:'subshape_sizes', base: shape_properties.subshape_sizes.length} ,
             { type:'color_alpha_values', base: shape_properties.color_alpha_values.length} ,
+        ],
+
+        'rectangle' : [
+            { type:'default_colors', base: shape_properties.default_colors} ,
+            // { type:'shape_sizes', base: shape_properties.shape_sizes.length} ,
+            // { type:'subshapes', base: shape_properties.subshapes.length} ,
+            // { type:'subshape_sizes', base: shape_properties.subshape_sizes.length} ,
+            // { type:'color_alpha_values', base: shape_properties.color_alpha_values.length} ,
         ]
     }
 
@@ -34,6 +42,7 @@ export class WolframImage{
         'debug': (graphic, color_machine, row_group, cell) => DrawDebug(graphic, color_machine, row_group, cell),
         'circle': (graphic, color_machine, row_group, cell) => DrawCircle(graphic, color_machine, row_group, cell),
         'triangle': (graphic, color_machine, row_group, cell) => DrawTriangle(graphic, color_machine, row_group, cell),
+        'rectangle': (graphic, color_machine, row_group, cell) => DrawRectangle(graphic, color_machine, row_group, cell),
     }
 
     constructor(image_index){
@@ -76,7 +85,7 @@ export class WolframImage{
                 // console.log('init_row',init_row)
                 this.drawShapeLUT[params.images[0].shape](
                     this.graphic, 
-                    this.color_machine, 
+                    this.color_machine,
                     {'default_colors': init_row}, 
                     cell
                 );
@@ -92,7 +101,6 @@ export class WolframImage{
         Object.entries(this.dataGenerators).forEach(([data_type,data_grid]:[any,any]) => {
             row_group[data_type] = [...data_grid.generateRow()]
         })
-        console.log('row_group',row_group)
         for(let cell_index = 0; cell_index < row_group.default_colors.length; cell_index++){
             let cell = this.getCellParams(cell_index,row_index)
             
