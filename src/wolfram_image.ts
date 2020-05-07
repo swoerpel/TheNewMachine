@@ -65,38 +65,25 @@ export class WolframImage{
         data_grid.Initialize(seed);
         return data_grid
     }
-    getInitRows(){
+    getInitRowCount(){
         return this.dataGenerators[this.default_type].init_rows.length
     }
 
-    drawInitRows(){
+    drawInitRow(row_index){
+        this.graphic.strokeWeight(0);
         let init_row_group:any = {}
-        let init_row_count;
         Object.entries(this.dataGenerators).forEach(([data_type,data_grid]:[any,any], index) => {
-            init_row_group[data_type] = {}
-            init_row_group[data_type]['rows'] = []
-            init_row_count = data_grid.init_rows.length
-            for(let row_index = 0; row_index < init_row_count; row_index++){  
-                let init_row = [...data_grid.getInitRow(row_index)]
-                init_row_group[data_type].rows.push(init_row)
-            }
+            init_row_group[data_type] = [...data_grid.getInitRow(row_index)]
         })
-        const grid_width = init_row_group[this.default_type].rows[0].length
-        init_row_group[this.default_type].rows.forEach((init_row, row_index) => {
-            for(let cell_index = 0; cell_index < grid_width; cell_index++){
-                let cell = this.getCellParams(cell_index,row_index)
-                // console.log('init_row',init_row)
-                this.drawShapeLUT[params.images[0].shape](
-                    this.graphic, 
-                    this.color_machine,
-                    {'default_colors': init_row}, 
-                    cell
-                );
-            }
-        })
-        return init_row_count;
+        for(let cell_index = 0; cell_index < init_row_group[this.default_type].length; cell_index++){
+            let cell = this.getCellParams(cell_index,row_index)
+            this.drawShapeLUT[params.images[0].shape](
+                this.graphic, 
+                this.color_machine, 
+                init_row_group, 
+                cell);
+        }
     }
-
 
     drawRow(row_index){
         this.graphic.strokeWeight(0);
@@ -114,8 +101,6 @@ export class WolframImage{
                 cell);
         }
     }
-
-
 
     getCellParams(cell_index, row_index){
         const cell_width = params.canvas.width / this.img_params.grid.width

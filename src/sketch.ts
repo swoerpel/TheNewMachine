@@ -10,6 +10,7 @@ var sketch = function (p: p5) {
   var img1;
   var image_index = 0;
   var row_index;
+  var init_row_count;
   
   p.setup = function () {
     setupGraphics()
@@ -30,8 +31,10 @@ var sketch = function (p: p5) {
     img1 = new WolframImage(image_index);
     img1.setGraphic(graphic);
     img1.setColors(prev_color_palette);
-    // for(let i = 0; i < img1.)
-    row_index = img1.drawInitRows(prev_color_palette);
+    init_row_count = img1.getInitRowCount()
+    for(let i = 0; i < init_row_count; i++)
+      img1.drawInitRow(i);
+    row_index = init_row_count
   }
 
   function incDrawIndex(){
