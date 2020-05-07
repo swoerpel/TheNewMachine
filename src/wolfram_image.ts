@@ -65,6 +65,9 @@ export class WolframImage{
         data_grid.Initialize(seed);
         return data_grid
     }
+    getInitRows(){
+        return this.dataGenerators[this.default_type].init_rows.length
+    }
 
     drawInitRows(){
         let init_row_group:any = {}

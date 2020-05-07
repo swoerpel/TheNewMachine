@@ -30,6 +30,7 @@ var sketch = function (p: p5) {
     img1 = new WolframImage(image_index);
     img1.setGraphic(graphic);
     img1.setColors(prev_color_palette);
+    // for(let i = 0; i < img1.)
     row_index = img1.drawInitRows(prev_color_palette);
   }
 
