@@ -1,6 +1,85 @@
 import { shape_properties } from './params';
 import { round } from './helpers';
 
+export var DrawRectangle = (graphic,color_machine,row_group, cell) => {
+    const sub_dim = shape_properties.subshapes[row_group.subshapes[cell.index]]
+    if(sub_dim == 1){
+        const cv = row_group.default_colors[cell.index] / shape_properties.default_colors
+        graphic.fill(color_machine(cv).hex())
+        graphic.rect(cell.origin.x, cell.origin.y, cell.width, cell.height)
+    }else{
+        const sub_cell_width = cell.width / sub_dim;
+        const sub_cell_height = cell.height / sub_dim;
+        let index = 0;
+        
+        let cvA = row_group.subshape_colorsA[cell.index] / shape_properties.default_colors
+        let cvB = row_group.subshape_colorsB[cell.index] / shape_properties.default_colors
+        let cv_step = (cvA - cvB) / (sub_dim - 1)
+        for(let x = 0; x < sub_dim; x++){
+            for(let y = 0; y < sub_dim; y++){
+
+                let sub_origin = {
+                    x: cell.origin.x + x * sub_cell_width,
+                    y: cell.origin.y + y * sub_cell_height,
+                    cx: cell.origin.x + x * sub_cell_width + sub_cell_width / 2,
+                    cy: cell.origin.y + y * sub_cell_height + sub_cell_height / 2,
+                }
+
+                graphic.fill(color_machine(cv_step * index).hex())
+                index++;
+                graphic.rect(sub_origin.x, sub_origin.y, sub_cell_width, sub_cell_height)
+            
+            }
+        }   
+
+    }
+    
+
+    // let size_index = row_group.shape_sizes[cell.index];
+    // let stack_size_indicies = Array.apply(null, {length: size_index}).map(Number.call, Number)
+    // drawRectangleStack(graphic, cell, stack_size_indicies, color_machine)
+    // console.log('row_group',row_group)
+    
+    // console.log(size_value)
+    // const cv = row_group.default_colors[cell.index] / shape_properties.default_colors
+    // // console.log(cv)
+    // graphic.fill(color_machine(cv).hex())
+    // graphic.rect(cell.origin.cx, cell.origin.cy, cell.width * size_value, cell.height * size_value)
+}
+
+function drawRectangleStack(graphic, cell, size_index,color_machine){
+    // let size_value = shape_properties.shape_sizes[size_index]
+    // const def_color_value = row.default_colors[cell_index] / shape_properties.default_colors
+    for(let i = size_index; i >= 0; i--){
+        let co = color_machine(Math.random()).rgba()
+        co[3] = 100
+        // console.log(co)
+        // co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell_index]]
+        graphic.fill(co)
+        const size_value = shape_properties.shape_sizes[i]
+        graphic.translate(-cell.width *size_value / 2,-cell.height *size_value / 2)
+        graphic.rect(cell.origin.cx, cell.origin.cy, cell.width * size_value, cell.height * size_value)
+        graphic.translate(cell.width *size_value / 2,cell.height *size_value / 2)
+
+        // graphic.circle(cell_origin.cx, cell_origin.cy, radius,radius)
+    }
+}
+
+// function drawRectangleStack(graphic,color_machine,row,cell_index,cell_origin, radius){
+//     const def_color_value = row.default_colors[cell_index] / shape_properties.default_colors
+//     for(let i = cell_index; i >= 0; i--){
+//         let co = color_machine(def_color_value).rgba()
+//         co[3] = 255 * shape_properties.color_alpha_values[row.color_alpha_values[cell_index]]
+//         graphic.fill(co)
+//         graphic.rect(cell_origin.cx, cell_origin.cy, radius,radius)
+//         // graphic.circle(cell_origin.cx, cell_origin.cy, radius,radius)
+//     }
+// }
+
+
+
+
+
 export var DrawDebug = (graphic,color_machine,row_group, cell) => {
     graphic.translate(-cell.width / 2,-cell.height / 2)
     // console.log(cell.index,row_group.default_colors)
@@ -10,13 +89,7 @@ export var DrawDebug = (graphic,color_machine,row_group, cell) => {
     graphic.rect(cell.origin.cx, cell.origin.cy, cell.width, cell.height)
     graphic.translate(cell.width / 2,cell.height / 2)
 }
-export var DrawRectangle = (graphic,color_machine,row_group, cell) => {
-    // console.log(cell.index,row_group.default_colors)
-    const cv = row_group.default_colors[cell.index] / shape_properties.default_colors
-    // console.log(cv)
-    graphic.fill(color_machine(cv).hex())
-    graphic.rect(cell.origin.x, cell.origin.y, cell.width, cell.height)
-}
+
 
 export var DrawCircle = (graphic,color_machine,row, cell) => {
     graphic.translate(-cell.width / 2,-cell.height / 2)

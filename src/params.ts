@@ -1,13 +1,12 @@
 
 export var shape_properties = {
-  default_colors: 3,
+  default_colors: 5,
   rotations:[0],
   shape_sizes:[1,1],
-  subshapes:[1,1], //1x1, 2x2, 3x3
+  subshapes:[1,2], //1x1, 2x2, 3x3
   subshape_sizes:[1,1],
   color_alpha_values: [1,1]
 }
-
 
 export var params = {
   canvas: {
@@ -18,8 +17,8 @@ export var params = {
   images: [
     {
       grid: {
-        width: 15,
-        height: 15,
+        width: 80,
+        height: 80,
       },
       kernel: 'B',
       shape: 'rectangle',

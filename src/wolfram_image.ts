@@ -31,8 +31,11 @@ export class WolframImage{
 
         'rectangle' : [
             { type:'default_colors', base: shape_properties.default_colors} ,
-            // { type:'shape_sizes', base: shape_properties.shape_sizes.length} ,
-            // { type:'subshapes', base: shape_properties.subshapes.length} ,
+            { type:'subshape_colorsA', base: shape_properties.default_colors} ,
+            { type:'subshape_colorsB', base: shape_properties.default_colors} ,
+            { type:'shape_sizes', base: shape_properties.shape_sizes.length} ,
+            { type:'subshapes', base: shape_properties.subshapes.length} ,
+            
             // { type:'subshape_sizes', base: shape_properties.subshape_sizes.length} ,
             // { type:'color_alpha_values', base: shape_properties.color_alpha_values.length} ,
         ]
